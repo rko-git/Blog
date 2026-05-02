@@ -1,5 +1,5 @@
 <?php
-require_once "../php/Utility.php";
+require_once "../php/Blog.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
