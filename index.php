@@ -1,5 +1,3 @@
 <?php
-    require_once "php/Redirect.php";
-
-    Redirect::redirect("stranka/home.php");
-?>
+header("Location: stranka/home.php");
+die();
