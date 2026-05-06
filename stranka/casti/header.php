@@ -20,6 +20,7 @@ require_once "../php/Blog.php";
                 <li><a href="posts.php">Posts</a></li>
                 <li><a href="about.php">About</a></li>
                 <li><a href="contact.php">Contact</a></li>
+                <li><a href="login.php">Login</a></li>
             </ul>
         </nav>
         <section class="hero-content">
