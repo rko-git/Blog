@@ -1,11 +1,14 @@
 <?php
 require_once "casti/header.php";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    Utility::message();
+}
 ?>
 
     <main>
         <section class="form-section">
             <h2>Send a message</h2>
-            <form class="contact-form" action="#" method="post">
+            <form class="contact-form" action="" method="POST">
                 <label for="name">Name</label>
                 <input type="text" id="name" name="name" placeholder="Your name">
 

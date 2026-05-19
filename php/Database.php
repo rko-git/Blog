@@ -6,7 +6,7 @@ class Database {
     function __construct() { #konstruktor pri instancii nadviaze spojenie s databazou a vypise spravu o spojeni
         try {
         $this->connect();
-        echo "Spojenie s databazou uspesne";
+        #echo "Spojenie s databazou uspesne";
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
