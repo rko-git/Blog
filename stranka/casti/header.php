@@ -26,7 +26,9 @@ if (isset($_POST["logout"])) {Auth::logout();}
                 <li><a href="posts.php">Posts</a></li>
                 <li><a href="about.php">About</a></li>
                 <li><a href="contact.php">Contact</a></li>
-                <!--<li><a href="login.php">Login</a></li> -->
+                <?php if (Auth::isAdmin()): ?>
+                <li><a href="admin.php">Admin</a></li>
+                <?php endif; ?>
                 <?php if (Auth::isLoggedIn()): ?>
                 <!--<li><a href="home.php?action=logout">Logout</a></li> -->
                 <li>

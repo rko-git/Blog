@@ -35,7 +35,7 @@ class Auth{
         return $_SESSION["user_id"] ?? null;
     }
     public static function isAdmin(): bool{
-        if (self::getId() === 1) {return true;}
+        if ($_SESSION["user_role"] == "admin") {return true;}
         return false;
     }
     public static function isLoggedIn(): bool{
