@@ -18,11 +18,12 @@ class Auth{
             $_SESSION["user_id"] = $user["iduser"];
             $_SESSION["user_role"] = $role["nazov"];
             $_SESSION["user_name"] = $user["nick"];
+            Utility::log("Prihlaseny pouzivatel: " . $user["nick"] . " ID: ". (string)$user["iduser"], false);
             Utility::redirect("home.php");
             return true;
         }
         catch (PDOException $err){
-            Utility::log("Chyba pri prihlasovani" . $err->getMessage());
+            Utility::log("Chyba pri prihlasovani" . $err->getMessage(), true);
             return false;
         }
     }
@@ -35,8 +36,24 @@ class Auth{
         return $_SESSION["user_id"] ?? null;
     }
     public static function isAdmin(): bool{
-        if ($_SESSION["user_role"] == "admin") {return true;}
-        return false;
+        return ($_SESSION["user_role"] ?? null) == "admin";
+    }
+    public static function checkAdmin(int $id): bool{
+        try{
+            $database = new Database();
+            $db = $database->getConnection();
+            $sql = $db->prepare("select r.nazov from user u inner join role r on u.idrole = r.idrole where u.iduser = :iduser");
+            $sql->execute(["iduser"=>$id]);
+            $role = $sql->fetch();
+            if ($role["nazov"] == "admin"){
+                return true;
+            }
+            return false;
+        }
+        catch(PDOException $err){
+            Utility::log($err->getMessage(), true);
+            return false;
+        }
     }
     public static function isLoggedIn(): bool{
         if (isset($_SESSION["user_id"])) {return true;}
@@ -52,12 +69,13 @@ class Auth{
         $date = date('Y-m-d');
         $sql = $db->prepare("insert into user(nick,email,heslo,idrole,vytvorene) values(:nick,:email,:password,2,:vytvorene)");
         $sql->execute(["nick"=>$meno,"email"=>$mail,"password"=>password_hash($heslo, PASSWORD_DEFAULT),"vytvorene"=>$date]);
+        $reg = "Zaregistrovany pouzivatel: " . $meno . " E-mail: " . $mail;
+        Utility::log($reg, false);
         Utility::redirect("login.php");
         return true;
         }
         catch (PDOException $err) {
-            #Utility::log("Chyba pri registracii" . $err->getMessage());
-            echo $err->getMessage();
+            Utility::log("Chyba pri registracii" . $err->getMessage(), true);
             return false;
         }
     }

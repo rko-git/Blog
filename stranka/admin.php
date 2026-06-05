@@ -1,50 +1,120 @@
 <?php
 require_once "../php/Blog.php";
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once "casti/header.php";
 if (!Auth::isAdmin()) {
     Utility::redirect("home.php");
 }
-require_once "casti/header.php";
+$cat = Content::readCategory();
+$users = Content::readUser();
+$posts = Content::readPost();
+if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
+    Content::deleteUser($_GET["deleteid"]);
+    Utility::redirect("admin.php");
+}
 ?>
 
     <main class="admin-page">
         <section class="admin-section">
             <div class="admin-section-header">
                 <h2>Categories</h2>
-                <button type="button" class="submit-btn">Create category</button>
+                <a href="category-create.php" class="submit-btn">Zatiaľ žiadne kategórie</a>
             </div>
-            <div class="admin-list">
-                <article class="admin-row">
-                    <div class="admin-row-info">
-                        <h3>Study</h3>
-                        <p class="meta">ID: 1 · Slug: study</p>
-                    </div>
-                    <div class="admin-actions">
-                        <button type="button" class="admin-btn admin-btn-edit">Edit</button>
-                        <button type="button" class="admin-btn admin-btn-delete">Delete</button>
-                    </div>
-                </article>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($cat)): ?>
+                        <tr>
+                            <td colspan="4" class="admin-table-empty">No categories yet.</td>
+                        </tr>
+                        <?php else: ?>
+                        <?php foreach ($cat as $category): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars((string) $category["idcategory"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td><?php echo htmlspecialchars($category["nazov"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td><?php echo htmlspecialchars($category["slug"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td class="admin-actions-cell">
+                                <a href="category-edit.php?id=<?php echo urlencode((string) $category["idcategory"]); ?>" class="admin-btn admin-btn-edit">Edit</a>
+                                <button type="button" class="admin-btn admin-btn-delete">Delete</button>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </section>
 
         <section class="admin-section">
             <div class="admin-section-header">
                 <h2>Posts</h2>
+                <button type="button" class="submit-btn">Create post</button>
             </div>
-            <div class="admin-list">
-                <article class="admin-row">
-                    <div class="admin-row-info">
-                        <h3>How to Prepare for a Big Test</h3>
-                        <p class="meta">ID: 1 · Category: Study · Author: admin</p>
-                        <p>Create a study schedule, review a little each day, and use practice questions before exam week.</p>
-                    </div>
-                    <div class="admin-actions">
-                        <button type="button" class="admin-btn admin-btn-edit">Edit</button>
-                        <button type="button" class="admin-btn admin-btn-delete">Delete</button>
-                    </div>
-                </article>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Author</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($posts)): ?>
+                            <tr>
+                                <td colspan="9" class="admin-table-empty">Zatiaľ žiadne príspevky</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($posts as $p): ?>
+                            <?php $postc = Content::readPostCategory($p["idpost"]);?>
+                        <tr>
+                                <td><?php echo htmlspecialchars((string) $p["idpost"], ENT_QUOTES, "UTF-8"); ?></td>
+                                <td><?php echo htmlspecialchars($p["nick"], ENT_QUOTES, "UTF-8"); ?></td>
+                                <td><?php echo htmlspecialchars($p["nadpis"], ENT_QUOTES, "UTF-8"); ?></td>
+                                <td><?php echo htmlspecialchars($p["slug"], ENT_QUOTES, "UTF-8"); ?></td>
+                                <td><?php echo htmlspecialchars($p["obrazok"], ENT_QUOTES, "UTF-8"); ?></td>
+                                <td>
+                                <?php $postcategories = [];
+                                    foreach ($postc as $pc) {
+                                        $postcategories[] = htmlspecialchars($pc["slug"], ENT_QUOTES, "UTF-8");
+                                    }
+                                    echo implode(", ", $postcategories);
+                                ?>
+                                </td>
+                                <td><?php echo htmlspecialchars($p["obsah"], ENT_QUOTES, "UTF-8"); ?></td>
+                                <td><?php echo htmlspecialchars($p["vytvorene"], ENT_QUOTES, "UTF-8"); ?></td>
+                                <td><?php echo htmlspecialchars($p["aktualizovane"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td class="admin-actions-cell">
+                                <button type="button" class="admin-btn admin-btn-edit">Edit</button>
+                                <button type="button" class="admin-btn admin-btn-delete">Delete</button>
+                            </td>
+                        
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                        <tr>
+                            <td>1</td>
+                            <td>How to Prepare for a Big Test</td>
+                            <td>Study</td>
+                            <td>admin</td>
+                            <td>Create a study schedule, review a little each day, and use practice questions before exam week.</td>
+                            <td class="admin-actions-cell">
+                                <button type="button" class="admin-btn admin-btn-edit">Edit</button>
+                                <button type="button" class="admin-btn admin-btn-delete">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
@@ -52,17 +122,33 @@ require_once "casti/header.php";
             <div class="admin-section-header">
                 <h2>Registered users</h2>
             </div>
-            <div class="admin-list">
-                <article class="admin-row">
-                    <div class="admin-row-info">
-                        <h3>admin</h3>
-                        <p class="meta">ID: 1 · admin@admin.net · Role: Admin</p>
-                    </div>
-                    <div class="admin-actions">
-                        <button type="button" class="admin-btn admin-btn-edit">Edit</button>
-                        <button type="button" class="admin-btn admin-btn-delete">Delete</button>
-                    </div>
-                </article>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (isset($users)): ?>
+                        <?php foreach ($users as $u): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars((string) $u["iduser"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td><?php echo htmlspecialchars($u["nick"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td><?php echo htmlspecialchars($u["email"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td><?php echo htmlspecialchars($u["nazov"], ENT_QUOTES, "UTF-8"); ?></td>
+                            <td class="admin-actions-cell">
+                                <a href="admin.php?deleteid=<?php echo urlencode((string) $u["iduser"]); ?>" class="admin-btn admin-btn-edit">Delete</a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
             </div>
         </section>
     </main>

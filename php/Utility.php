@@ -9,15 +9,27 @@ class Utility {
         header("Location: ".$url); # zavola vstavanu funkciu header s parametrom Location: ktora povie prehliadacu aby zmenila adresu na danu URL
         die(); # ukonci skript
     }
-    public static function log(string $log):void{
-        $dir = __DIR__ . '/../log';
+    public static function log(string $log, bool $error):void{
+        if ($error){
+        $dir = __DIR__ . '/../error';
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $file = $dir . '/error.log';
+        $file = $dir . '/log.log';
         $date = date('Y-m-d H:i:s');
         $formattedMessage = "[$date] {$log}" . PHP_EOL;
         file_put_contents($file, $formattedMessage, FILE_APPEND);
+        }
+        else {
+            $dir = __DIR__ . '/../log';
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $file = $dir . '/log.log';
+            $date = date('Y-m-d H:i:s');
+            $formattedMessage = "[$date] {$log}" . PHP_EOL;
+            file_put_contents($file, $formattedMessage, FILE_APPEND);
+        }
     }
     public static function message():void {
         try{
@@ -32,7 +44,7 @@ class Utility {
         }
         catch (PDOException $err){
             echo $err->getMessage();
-            self::log($err->getMessage());
+            self::log($err->getMessage(), true);
         }
     }
 }
