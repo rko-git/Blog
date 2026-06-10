@@ -17,7 +17,7 @@ if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
         <section class="admin-section">
             <div class="admin-section-header">
                 <h2>Categories</h2>
-                <a href="category-create.php" class="submit-btn">Zatiaľ žiadne kategórie</a>
+                <a href="category-create.php" class="submit-btn">Create category</a>
             </div>
             <div class="admin-table-wrap">
                 <table class="admin-table">
@@ -55,17 +55,21 @@ if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
         <section class="admin-section">
             <div class="admin-section-header">
                 <h2>Posts</h2>
-                <button type="button" class="submit-btn">Create post</button>
+                <a href="post-create.php" class="submit-btn">Create post</a>
             </div>
             <div class="admin-table-wrap">
                 <table class="admin-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Title</th>
-                            <th>Category</th>
                             <th>Author</th>
+                            <th>Title</th>
+                            <th>Slug</th>
+                            <th>Image</th>
+                            <th>Categories</th>
                             <th>Description</th>
+                            <th>Created</th>
+                            <th>Updated</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -95,24 +99,12 @@ if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
                                 <td><?php echo htmlspecialchars($p["vytvorene"], ENT_QUOTES, "UTF-8"); ?></td>
                                 <td><?php echo htmlspecialchars($p["aktualizovane"], ENT_QUOTES, "UTF-8"); ?></td>
                             <td class="admin-actions-cell">
-                                <button type="button" class="admin-btn admin-btn-edit">Edit</button>
+                                <a href="post-edit.php?id=<?php echo urlencode((string) $p["idpost"]); ?>" class="admin-btn admin-btn-edit">Edit</a>
                                 <button type="button" class="admin-btn admin-btn-delete">Delete</button>
                             </td>
-                        
                         </tr>
                         <?php endforeach; ?>
                         <?php endif; ?>
-                        <tr>
-                            <td>1</td>
-                            <td>How to Prepare for a Big Test</td>
-                            <td>Study</td>
-                            <td>admin</td>
-                            <td>Create a study schedule, review a little each day, and use practice questions before exam week.</td>
-                            <td class="admin-actions-cell">
-                                <button type="button" class="admin-btn admin-btn-edit">Edit</button>
-                                <button type="button" class="admin-btn admin-btn-delete">Delete</button>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>

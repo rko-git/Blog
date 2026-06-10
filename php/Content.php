@@ -20,14 +20,13 @@ class Content{
             return false;
         }
     }
-    public static function editCategory():bool{
+    public static function editCategory(int $id):bool{
         try{
             if (!Auth::isLoggedIn()) {
                 return false;
             }
             $name = $_POST["name"];
             $slug = $_POST["slug"];
-            $id = $_POST["id"];
             $database = new Database();
             $db = $database->getConnection();
             $sql = $db->prepare("update category set nazov = :nazov, slug = :slug where idcategory = :id");
@@ -124,6 +123,7 @@ class Content{
             $obsah = $_POST["obsah"];
             $date = date('Y-m-d');
             $sql = $db->prepare("insert into post (iduser,nadpis,slug,obsah,vytvorene,aktualizovane,obrazok) values (:iduser,:nadpis,:slug,:obsah,:vytvorene,:aktualizovane,:obrazok)");
+            $obrazok = "sample.png";
             if (isset($_FILES["image"]) && $_FILES["image"]["error"] === UPLOAD_ERR_OK){
                 $povolene = ["jpg", "jpeg", "png", "webp"];
                 $pripona = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
@@ -135,10 +135,15 @@ class Content{
                 if (!move_uploaded_file($_FILES["image"]["tmp_name"], $cestaObrazka)) {
                     return false;
                 }
-                $sql->execute(["iduser"=>$iduser,"nadpis"=>$nadpis,"slug"=>$slug,"obsah"=>$obsah,"vytvorene"=>$date,"aktualizovane"=>$date, "obrazok"=>$obrazok]);
-                return true;
             }
-            $sql->execute(["iduser"=>$iduser,"nadpis"=>$nadpis,"slug"=>$slug,"obsah"=>$obsah,"vytvorene"=>$date,"aktualizovane"=>$date, "obrazok"=>"sample.png"]);
+            $sql->execute(["iduser"=>$iduser,"nadpis"=>$nadpis,"slug"=>$slug,"obsah"=>$obsah,"vytvorene"=>$date,"aktualizovane"=>$date, "obrazok"=>$obrazok]);
+            $idpost = (int) $db->lastInsertId();
+            if (!empty($_POST["categories"]) && is_array($_POST["categories"])) {
+                $categorySql = $db->prepare("insert into post_category (idpost, idcategory) values (:idpost, :idcategory)");
+                foreach ($_POST["categories"] as $idcategory) {
+                    $categorySql->execute(["idpost" => $idpost, "idcategory" => (int) $idcategory]);
+                }
+            }
             return true;
         }
         catch (Exception $err){
@@ -162,7 +167,7 @@ class Content{
         try{
             $database = new Database();
             $db = $database->getConnection();
-            $sql = $db->query("select c.nazov from category c inner join post_category pc on c.idcategory = pc.idcategory inner join post p on pc.idpost = p.idpost where p.idpost = $idpost");
+            $sql = $db->query("select c.nazov, c.slug from category c inner join post_category pc on c.idcategory = pc.idcategory inner join post p on pc.idpost = p.idpost where p.idpost = $idpost");
             return $sql->fetchAll();
         }
         catch(PDOException $err){
@@ -181,6 +186,79 @@ class Content{
         }
         catch (PDOException $err) {
             Utility::log($err->getMessage(), true);
+            return false;
+        }
+    }
+    public static function getPostCategoryIds(int $idpost): array {
+        try {
+            $database = new Database();
+            $db = $database->getConnection();
+            $sql = $db->prepare("select idcategory from post_category where idpost = :idpost");
+            $sql->execute(["idpost" => $idpost]);
+            return array_map("intval", array_column($sql->fetchAll(), "idcategory"));
+        }
+        catch (PDOException $err) {
+            Utility::log($err->getMessage(), true);
+            return [];
+        }
+    }
+
+    public static function deletePost(int $id):bool{
+        try{
+            if (!Auth::isLoggedIn()) {
+                return false;
+            }
+            $database = new Database();
+            $db = $database->getConnection();
+            $sql = $db->prepare("delete from post where idpost = :id");
+            $sql->execute(["id"=>$id]);
+            return true;
+        }
+        catch (PDOException $err){
+            Utility::log($err, true);
+            return false;
+        }
+    }
+    public static function editPost(int $id):bool{
+        try{
+            if (!Auth::isLoggedIn()) {
+                return false;
+            }
+            $path = __DIR__ . "/../img/";
+            $nadpis = $_POST["nadpis"];
+            $slug = $_POST["slug"];
+            $obsah = $_POST["obsah"];
+            $database = new Database();
+            $db = $database->getConnection();
+            if (isset($_FILES["image"]) && $_FILES["image"]["error"] === UPLOAD_ERR_OK){
+                $povolene = ["jpg", "jpeg", "png", "webp"];
+                $pripona = strtolower(pathinfo($_FILES["image"]["name"], PATHINFO_EXTENSION));
+                if (!in_array($pripona, $povolene)){
+                    return false;
+                }
+                $obrazok = uniqid() . "." . $pripona;
+                $cestaObrazka = $path . $obrazok;
+                if (!move_uploaded_file($_FILES["image"]["tmp_name"], $cestaObrazka)) {
+                    return false;
+                }
+                $sql = $db->prepare("update post set nadpis = :nadpis, slug = :slug, obsah = :obsah, aktualizovane = now(), obrazok = :obrazok where idpost = :id");
+                $sql->execute(["nadpis"=>$nadpis,"slug"=>$slug,"obsah"=>$obsah,"obrazok"=>$obrazok,"id"=>$id]);
+            } else {
+                $sql = $db->prepare("update post set nadpis = :nadpis, slug = :slug, obsah = :obsah, aktualizovane = now() where idpost = :id");
+                $sql->execute(["nadpis"=>$nadpis,"slug"=>$slug,"obsah"=>$obsah,"id"=>$id]);
+            }
+            $deleteCategories = $db->prepare("delete from post_category where idpost = :idpost");
+            $deleteCategories->execute(["idpost" => $id]);
+            if (!empty($_POST["categories"]) && is_array($_POST["categories"])) {
+                $categorySql = $db->prepare("insert into post_category (idpost, idcategory) values (:idpost, :idcategory)");
+                foreach ($_POST["categories"] as $idcategory) {
+                    $categorySql->execute(["idpost" => $id, "idcategory" => (int) $idcategory]);
+                }
+            }
+            return true;
+        }
+        catch (PDOException $err){
+            Utility::log($err, true);
             return false;
         }
     }

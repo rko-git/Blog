@@ -260,6 +260,25 @@ main {
     margin-top: 4px;
 }
 
+.category-fieldset {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.category-fieldset legend {
+    font-weight: bold;
+    padding: 0 6px;
+}
+
+.contact-form input[type="file"] {
+    padding: 8px 0;
+    border: none;
+}
+
 .submit-btn {
     border: none;
     background: var(--primary);
