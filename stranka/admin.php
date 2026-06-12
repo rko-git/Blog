@@ -7,8 +7,16 @@ if (!Auth::isAdmin()) {
 $cat = Content::readCategory();
 $users = Content::readUser();
 $posts = Content::readPost();
-if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
+if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) && Auth::isAdmin() ) {
     Content::deleteUser($_GET["deleteid"]);
+    Utility::redirect("admin.php");
+}
+if (isset($_GET["deletecatid"]) && Auth::isAdmin()  ) {
+    Content::deleteCategory($_GET["deletecatid"]);
+    Utility::redirect("admin.php");
+}
+if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
+    Content::deletePost($_GET["deletepostid"]);
     Utility::redirect("admin.php");
 }
 ?>
@@ -32,7 +40,7 @@ if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
                     <tbody>
                         <?php if (empty($cat)): ?>
                         <tr>
-                            <td colspan="4" class="admin-table-empty">No categories yet.</td>
+                            <td colspan="4" class="admin-table-empty">Zatiaľ žiadne kategórie</td>
                         </tr>
                         <?php else: ?>
                         <?php foreach ($cat as $category): ?>
@@ -42,7 +50,7 @@ if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
                             <td><?php echo htmlspecialchars($category["slug"], ENT_QUOTES, "UTF-8"); ?></td>
                             <td class="admin-actions-cell">
                                 <a href="category-edit.php?id=<?php echo urlencode((string) $category["idcategory"]); ?>" class="admin-btn admin-btn-edit">Edit</a>
-                                <button type="button" class="admin-btn admin-btn-delete">Delete</button>
+                                <a href="admin.php?deletecatid=<?php echo urlencode((string) $category["idcategory"]); ?>" class="admin-btn admin-btn-delete">Delete</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -100,7 +108,7 @@ if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
                                 <td><?php echo htmlspecialchars($p["aktualizovane"], ENT_QUOTES, "UTF-8"); ?></td>
                             <td class="admin-actions-cell">
                                 <a href="post-edit.php?id=<?php echo urlencode((string) $p["idpost"]); ?>" class="admin-btn admin-btn-edit">Edit</a>
-                                <button type="button" class="admin-btn admin-btn-delete">Delete</button>
+                                <a href="admin.php?deletepostid=<?php echo urlencode((string) $p["idpost"]); ?>" class="admin-btn admin-btn-delete">Delete</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -134,7 +142,8 @@ if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) ) {
                             <td><?php echo htmlspecialchars($u["email"], ENT_QUOTES, "UTF-8"); ?></td>
                             <td><?php echo htmlspecialchars($u["nazov"], ENT_QUOTES, "UTF-8"); ?></td>
                             <td class="admin-actions-cell">
-                                <a href="admin.php?deleteid=<?php echo urlencode((string) $u["iduser"]); ?>" class="admin-btn admin-btn-edit">Delete</a>
+                                <a href="change-role.php?id=<?php echo urlencode((string) $u["iduser"]); ?>" class="admin-btn admin-btn-edit">Edit</a>
+                                <a href="admin.php?deleteid=<?php echo urlencode((string) $u["iduser"]); ?>" class="admin-btn admin-btn-delete">Delete</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

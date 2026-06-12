@@ -1,14 +1,14 @@
 <?php
 class Database {
 
-    private PDO $connection; #deklaracia objektu PDO do premennej
+    private PDO $connection; #deklaracia premennej objektu PDO
 
     function __construct() { #konstruktor pri instancii nadviaze spojenie s databazou a vypise spravu o spojeni
         try {
-        $this->connect();
+        $this->connect(); //this sa pouziva pri odkazovani na aktualnu instanciu triedy narozdiel od self ktory sa pouziva na pristup statickym atributom a metodam
         #echo "Spojenie s databazou uspesne";
         } catch (PDOException $e) {
-            echo $e->getMessage();
+           Utility::log($e->getMessage(), true);
         }
     }
     private function connect(): void {

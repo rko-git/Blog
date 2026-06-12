@@ -1,7 +1,7 @@
 <?php
 require_once "../php/Blog.php";
 require_once "casti/header.php";
-if (!Auth::isAdmin()) {
+if (!Auth::isAdmin() && !Auth::isEditor()) {
     Utility::redirect("home.php");
 }
 
@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <button type="submit" class="submit-btn">Save changes</button>
             </form>
             <p class="form-links">
-                <a href="admin.php" class="submit-btn btn-secondary">Back to Admin</a>
+                <a href="admin.php" class="submit-btn btn-secondary">Return</a>
             </p>
         </section>
     </main>

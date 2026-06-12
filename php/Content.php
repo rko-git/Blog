@@ -55,11 +55,10 @@ class Content{
 
     public static function deleteCategory(int $id):bool{
         try{
-            if (!Auth::isLoggedIn()) {
-                return false;
-            }
             $database = new Database();
             $db = $database->getConnection();
+            $sql = $db->prepare("delete from post_category where idcategory = :id");
+            $sql->execute(["id"=>$id]);
             $sql = $db->prepare("delete from category where idcategory = :id");
             $sql->execute(["id"=>$id]);
             return true;
@@ -95,7 +94,7 @@ class Content{
     }
     public static function deleteUser(int $id):bool{
         try{
-            if (!Auth::isLoggedIn()) {
+            if (!Auth::isAdmin()) {
                 return false;
             }
             $database = new Database();
@@ -105,6 +104,49 @@ class Content{
             return true;
         }
         catch(PDOException $err){
+            Utility::log($err->getMessage(), true);
+            return false;
+        }
+    }
+    public static function readRole():array{
+        try{
+            $database = new Database();
+            $db = $database->getConnection();
+            $sql = $db->query("select * from role");
+            return $sql->fetchAll();
+        }
+        catch(PDOException $err){
+            Utility::log($err->getMessage(), true);
+            return [];
+        }
+    }
+    public static function changeRole(int $id):bool{
+        try{
+            if (!Auth::isAdmin()) {
+                return false;
+            }
+            $idrole = $_POST["idrole"];
+            $database = new Database();
+            $db = $database->getConnection();
+            $sql = $db->prepare("update user set idrole = :idrole where iduser = :iduser");
+            $sql->execute(["idrole"=>$idrole,"iduser"=>$id]);
+            return true;
+        }
+        catch(PDOException $err){
+            Utility::log($err->getMessage(), true);
+            return false;
+        }
+    }
+    public static function getUserById(int $id):array|false{
+        try {
+            $database = new Database();
+            $db = $database->getConnection();
+            $sql = $db->prepare("select u.*, r.nazov from user u inner join role r on u.idrole = r.idrole where iduser = :id");
+            $sql->execute(["id" => $id]);
+            $user = $sql->fetch();
+            return $user ?: false;
+        }
+        catch (PDOException $err) {
             Utility::log($err->getMessage(), true);
             return false;
         }
@@ -121,8 +163,7 @@ class Content{
             $nadpis = $_POST["nadpis"];
             $slug = $_POST["slug"];
             $obsah = $_POST["obsah"];
-            $date = date('Y-m-d');
-            $sql = $db->prepare("insert into post (iduser,nadpis,slug,obsah,vytvorene,aktualizovane,obrazok) values (:iduser,:nadpis,:slug,:obsah,:vytvorene,:aktualizovane,:obrazok)");
+            $sql = $db->prepare("insert into post (iduser,nadpis,slug,obsah,vytvorene,obrazok) values (:iduser,:nadpis,:slug,:obsah,now(),:obrazok)");
             $obrazok = "sample.png";
             if (isset($_FILES["image"]) && $_FILES["image"]["error"] === UPLOAD_ERR_OK){
                 $povolene = ["jpg", "jpeg", "png", "webp"];
@@ -136,7 +177,7 @@ class Content{
                     return false;
                 }
             }
-            $sql->execute(["iduser"=>$iduser,"nadpis"=>$nadpis,"slug"=>$slug,"obsah"=>$obsah,"vytvorene"=>$date,"aktualizovane"=>$date, "obrazok"=>$obrazok]);
+            $sql->execute(["iduser"=>$iduser,"nadpis"=>$nadpis,"slug"=>$slug,"obsah"=>$obsah, "obrazok"=>$obrazok]);
             $idpost = (int) $db->lastInsertId();
             if (!empty($_POST["categories"]) && is_array($_POST["categories"])) {
                 $categorySql = $db->prepare("insert into post_category (idpost, idcategory) values (:idpost, :idcategory)");
@@ -155,7 +196,7 @@ class Content{
         try{
             $database = new Database();
             $db = $database->getConnection();
-            $sql = $db->query("select p.idpost,u.nick,p.nadpis,p.slug,p.obsah,p.vytvorene,p.aktualizovane,p.obrazok from post p inner join user u on p.iduser = u.iduser");
+            $sql = $db->query("select p.idpost,u.nick,u.iduser,p.nadpis,p.slug,p.obsah,p.vytvorene,p.aktualizovane,p.obrazok from post p inner join user u on p.iduser = u.iduser");
             return $sql->fetchAll();
         }
         catch(PDOException $err){
@@ -210,6 +251,8 @@ class Content{
             }
             $database = new Database();
             $db = $database->getConnection();
+            $sql = $db->prepare("delete from post_category where idpost = :id");
+            $sql->execute(["id"=>$id]);
             $sql = $db->prepare("delete from post where idpost = :id");
             $sql->execute(["id"=>$id]);
             return true;

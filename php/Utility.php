@@ -11,11 +11,11 @@ class Utility {
     }
     public static function log(string $log, bool $error):void{
         if ($error){
-        $dir = __DIR__ . '/../error';
+        $dir = __DIR__ . '/../log';
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $file = $dir . '/log.log';
+        $file = $dir . '/error.log';
         $date = date('Y-m-d H:i:s');
         $formattedMessage = "[$date] {$log}" . PHP_EOL;
         file_put_contents($file, $formattedMessage, FILE_APPEND);
