@@ -20,18 +20,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <main>
         <section class="form-section">
-            <h2>Login</h2>
+            <h2>Prihlásenie</h2>
             <form class="contact-form" action="#" method="POST">
                 <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" placeholder="Enter your E-mail">
+                <input type="email" id="email" name="email" placeholder="Zadaj svoj E-mail">
 
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password">
-
-                <button type="submit" class="submit-btn">Login</button>
+                <label for="password">Heslo</label>
+                <input type="password" id="password" name="password" placeholder="Zadaj svoje heslo">
+                <div class="checkbox-row">
+                    <input  type="checkbox" id="remember" name="remember" placeholder="Zapamätaj si ma">
+                    <label for="remember">Zapamätaj si ma</label>
+                </div>
+                <button type="submit" class="submit-btn">Prihlásiť</button>
             </form>
             <p class="form-links">
-                <a href="register.php" class="submit-btn btn-secondary">Register</a>
+                <a href="register.php" class="submit-btn btn-secondary">Registrácia</a>
             </p>
         </section>
     </main>

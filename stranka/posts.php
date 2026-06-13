@@ -16,8 +16,8 @@ if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_G
         <?php if(Auth::isEditor()): ?>
         <section class="admin-section">
             <div class="admin-section-header">
-                <h2>Posts</h2>
-                <a href="post-create.php" class="submit-btn">Create post</a>
+                <h2>Príspevky</h2>
+                <a href="post-create.php" class="submit-btn">Vytvoriť príspevok</a>
             </div>
             <div class="admin-table-wrap">
                 <table class="admin-table">
@@ -75,9 +75,9 @@ if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_G
         </section>
         <?php endif; ?>
         <section class="controls">
-            <input id="searchInput" type="text" placeholder="Search blog posts...">
+            <input id="searchInput" type="text" placeholder="Vyhladávanie">
             <div class="filters">
-                <button type="button" class="filter-btn active" data-category="all">All</button>
+                <button type="button" class="filter-btn active" data-category="all">Všetko</button>
                 <?php foreach ($categories as $cats): ?>
                 <button type="button" class="filter-btn" data-category="<?php echo htmlspecialchars($cats["slug"], ENT_QUOTES, "UTF-8"); ?>"><?php echo htmlspecialchars($cats["nazov"], ENT_QUOTES, "UTF-8"); ?></button>
                 <?php endforeach; ?>
@@ -86,7 +86,7 @@ if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_G
 
         <section class="posts-grid">
             <?php if (empty($posts)): ?>
-            <p class="meta">No posts yet.</p>
+            <p class="meta">Zatiaľ žiadne príspevky</p>
             <?php else: ?>
             <?php foreach ($posts as $post): ?>
             <?php
@@ -102,7 +102,7 @@ if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_G
             <article class="post-card" data-category="<?php echo htmlspecialchars(implode(",", $postSlugs), ENT_QUOTES, "UTF-8"); ?>">
                 <img src="../img/<?php echo htmlspecialchars($post["obrazok"], ENT_QUOTES, "UTF-8"); ?>" alt="<?php echo htmlspecialchars($post["nadpis"], ENT_QUOTES, "UTF-8"); ?>" class="post-image">
                 <h3><?php echo htmlspecialchars($post["nadpis"], ENT_QUOTES, "UTF-8"); ?></h3>
-                <p class="meta">Category: <?php echo htmlspecialchars(implode(", ", $postNames), ENT_QUOTES, "UTF-8"); ?></p>
+                <p class="meta">Kategória: <?php echo htmlspecialchars(implode(", ", $postNames), ENT_QUOTES, "UTF-8"); ?></p>
                 <p><?php echo htmlspecialchars($post["obsah"], ENT_QUOTES, "UTF-8"); ?></p>
             </article>
             <?php endforeach; ?>

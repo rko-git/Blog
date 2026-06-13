@@ -12,7 +12,7 @@ class Content{
             $db = $database->getConnection();
             $sql = $db->prepare("insert into category(nazov,slug) values(:nazov,:slug)");
             $sql->execute(["nazov"=>$name,"slug"=>$slug]);
-            Utility::log("Vytvorená", false);
+            Utility::log($_SESSION["user_name"] . " ID: ". $_SESSION["user_id"] . " vytvoril kategóriu s názvom: " . $name, false);
             return true;
         }
         catch (PDOException $err){
@@ -31,6 +31,7 @@ class Content{
             $db = $database->getConnection();
             $sql = $db->prepare("update category set nazov = :nazov, slug = :slug where idcategory = :id");
             $sql->execute(["nazov"=>$name,"slug"=>$slug,"id"=>$id]);
+            Utility::log($_SESSION["user_name"] . " ID: ". $_SESSION["user_id"] . " upravil kategóriu s ID: " . $id, false);
             return true;
         }
         catch (PDOException $err){
@@ -57,10 +58,14 @@ class Content{
         try{
             $database = new Database();
             $db = $database->getConnection();
+            $sql = $db->prepare("select * from category where idcategory = :id");
+            $sql->execute(["id"=>$id]);
+            $cat = $sql->fetch();
             $sql = $db->prepare("delete from post_category where idcategory = :id");
             $sql->execute(["id"=>$id]);
             $sql = $db->prepare("delete from category where idcategory = :id");
             $sql->execute(["id"=>$id]);
+            Utility::log($_SESSION["user_name"] . " ID: ". $_SESSION["user_id"] . " vymazal kategóriu s ID: " . $id . " názov: " . $cat["nazov"], false);
             return true;
         }
         catch (PDOException $err){
@@ -101,6 +106,7 @@ class Content{
             $db = $database->getConnection();
             $sql = $db->prepare("delete from user where iduser = :id");
             $sql->execute(["id"=>$id]);
+            Utility::log($_SESSION["user_name"] . " ID: ". $_SESSION["user_id"] . " vymazal používatela s ID: " . $id, false);
             return true;
         }
         catch(PDOException $err){
@@ -130,6 +136,7 @@ class Content{
             $db = $database->getConnection();
             $sql = $db->prepare("update user set idrole = :idrole where iduser = :iduser");
             $sql->execute(["idrole"=>$idrole,"iduser"=>$id]);
+            Utility::log($_SESSION["user_name"] . " ID: ". $_SESSION["user_id"] . " zmenil rolu používatela s ID: " . $id . " na: " . $idrole, false);
             return true;
         }
         catch(PDOException $err){
@@ -185,6 +192,7 @@ class Content{
                     $categorySql->execute(["idpost" => $idpost, "idcategory" => (int) $idcategory]);
                 }
             }
+            Utility::log($_SESSION["user_name"] . " ID: ". $_SESSION["user_id"] . " vytvoril post s názvom: " . $nadpis, false);
             return true;
         }
         catch (Exception $err){
@@ -255,6 +263,7 @@ class Content{
             $sql->execute(["id"=>$id]);
             $sql = $db->prepare("delete from post where idpost = :id");
             $sql->execute(["id"=>$id]);
+            Utility::log($_SESSION["user_name"] . " ID: ". $_SESSION["user_id"] . " vymazal post s ID: " . $id, false);
             return true;
         }
         catch (PDOException $err){
@@ -298,6 +307,7 @@ class Content{
                     $categorySql->execute(["idpost" => $id, "idcategory" => (int) $idcategory]);
                 }
             }
+            Utility::log($_SESSION["user_name"] . " ID: ". $_SESSION["user_id"] . " upravil post s ID: " . $id, false);
             return true;
         }
         catch (PDOException $err){

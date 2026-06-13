@@ -7,23 +7,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <main>
         <section class="form-section">
-            <h2>Send a message</h2>
+            <h2>Odoslať správu</h2>
             <form class="contact-form" action="" method="POST">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your name">
+                <label for="name">Meno</label>
+                <input type="text" id="name" name="name" placeholder="Vaše meno">
 
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="your@email.com">
+                <input type="email" id="email" name="email" placeholder="tvoj@email.com">
 
-                <label for="description">Description</label>
-                <textarea id="description" name="description" rows="6" placeholder="Write your message here"></textarea>
+                <label for="description">Popis</label>
+                <textarea id="description" name="description" rows="6" placeholder="Sem píš správu"></textarea>
 
                 <label class="checkbox-row" for="consent">
                     <input type="checkbox" id="consent" name="consent">
-                    <span>I confirm that the information above is correct.</span>
+                    <span>Súhlasím so spracovaním osobných údajov.</span>
                 </label>
 
-                <button type="submit" id="submitButton" class="submit-btn" disabled>Send</button>
+                <button type="submit" id="submitButton" class="submit-btn" disabled>Odoslať</button>
             </form>
         </section>
     </main>

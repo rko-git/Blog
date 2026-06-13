@@ -16,6 +16,14 @@ class Auth{
             $_SESSION["user_id"] = $user["iduser"];
             $_SESSION["user_role"] = $user["nazov"];
             $_SESSION["user_name"] = $user["nick"];
+            if (isset($_POST["remember"])){
+                $token = bin2hex(random_bytes(32)); //vygeneruje nahodnych 32 znakov
+                $hash = hash("sha256", $token); //zahashuje vygenerovane znaky pomocou daneho algoritmu
+                $exp = date("Y-m-d H:i:s", strtotime("+15 days")); //nastavi do premennej hodnotu o 15 dni neskor, strtotime prevedie dany text v anglictine na cas
+                $sql = $db->prepare("insert into remember_token (iduser,token_hash,expires_at) values (:iduser,:token_hash,:expires_at)");
+                $sql->execute(["iduser"=>$user["iduser"],"token_hash"=>$hash,"expires_at"=>$exp]);
+                setcookie("remember_token",$token,["expires"=>strtotime("+15 days"),"path"=>"/","httponly"=>true,"secure"=>!empty($_SERVER["HTTPS"]),"samesite"=>"Strict"]); //vytvorenie cookie s nazvom remember_token ktory bude prehliadacom odstraneny po 15 dnoch, path znaci ze cookie bude urcena pre cely web, httponly true znamena ze js nebude moct precitat cookie s document.cookie, secure urcuje ci bude cookie posielat iba cez HTTPS, ale xampp bezi na HTTP, samesite Strict urcuje ze prehliadac nebude posielat cookie pri poziadavkach z inych webov
+            }
             Utility::log("Prihlaseny pouzivatel: " . $user["nick"] . " ID: ". (string)$user["iduser"], false);
             Utility::redirect("home.php");
             return true;
@@ -25,7 +33,40 @@ class Auth{
             return false;
         }
     }
+    public static function loginWithRememberCookie():void{
+        try{
+            $database = new Database();
+            $db = $database->getConnection();
+            if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
+                $token = $_COOKIE["remember_token"];
+                $hash = hash("sha256", $token);
+                $sql = $db->prepare("select rt.iduser, u.nick, r.nazov from remember_token rt inner join user u on rt.iduser = u.iduser inner join role r on u.idrole = r.idrole where token_hash = :token_hash and expires_at > now()");
+                $sql->execute(["token_hash"=>$hash]);
+                $cookie = $sql->fetch();
+                if ($cookie){
+                    session_regenerate_id(true);
+                    $_SESSION["user_id"] = $cookie["iduser"];
+                    $_SESSION["user_role"] = $cookie["nazov"];
+                    $_SESSION["user_name"] = $cookie["nick"];
+                }
+            }
+            $sql = $db->exec("delete from remember_token where expires_at < now()"); //mazanie expirovanych remember tokenov
+            return;
+        }
+        catch (PDOException $err){
+            Utility::log($err->getMessage(), true);
+            return;
+        }
+    }
     public static function logout():void{ 
+        if (isset($_COOKIE["remember_token"])) {
+            $database = new Database();
+            $db = $database->getConnection();
+            $hash = hash("sha256", $_COOKIE["remember_token"]);
+            $sql = $db->prepare("delete from remember_token where token_hash = :token_hash");
+            $sql->execute(["token_hash"=>$hash]);
+            setcookie("remember_token","",time() - 3600,"/");
+        }
         $_SESSION = []; // pri odhlasovani sa superglobalna premenna _SESSION pre istotu navyse vyprazdnuje
         session_destroy();
         Utility::redirect("home.php");

@@ -13,7 +13,7 @@ if (!$category) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    if (Content::editCategory()) {
+    if (Content::editCategory($id)) {
         Utility::redirect("admin.php");
     }
 }

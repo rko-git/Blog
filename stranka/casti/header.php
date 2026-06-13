@@ -1,8 +1,10 @@
 <?php
 require_once "../php/Blog.php";
-if (session_status() === PHP_SESSION_NONE){
-    session_start();
+
+if (session_status() === PHP_SESSION_NONE){ // ak neexistuje session tak sa vytvori novy, server posle pouzivatelovi do prehliadaca cookie podla ktoreho server vie nacitat spravne udaje pre session pri nacitani stranky
+    session_start(); 
 }
+Auth::loginWithRememberCookie();
 $username = Auth::getLoginStatus();
 if (isset($_POST["logout"])) {Auth::logout();}
 ?>
@@ -22,10 +24,10 @@ if (isset($_POST["logout"])) {Auth::logout();}
             </a>
 
             <ul class="nav-links">
-                <li><a href="home.php">Home</a></li>
-                <li><a href="posts.php">Posts</a></li>
-                <li><a href="about.php">About</a></li>
-                <li><a href="contact.php">Contact</a></li>
+                <li><a href="home.php">Domov</a></li>
+                <li><a href="posts.php">Príspevky</a></li>
+                <li><a href="about.php">O nás</a></li>
+                <li><a href="contact.php">Kontakt</a></li>
                 <?php if (Auth::isAdmin()): ?>
                 <li><a href="admin.php">Admin</a></li>
                 <?php endif; ?>
@@ -53,8 +55,7 @@ if (isset($_POST["logout"])) {Auth::logout();}
         </form>
         <?php endif; ?>
         <section class="hero-content">
-            <p class="tag">School Project</p>
-            <h2>Blog</h2>
-            <p>A simple blog website with separate pages for home, posts, about, and contact.</p>
+            <p class="tag">UKF</p>
+            <h2>Skriptovacie Jazyky</h2>
         </section>
     </header>
