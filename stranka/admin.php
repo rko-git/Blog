@@ -7,7 +7,7 @@ if (!Auth::isAdmin()) {
 $cat = Content::readCategory();
 $users = Content::readUser();
 $posts = Content::readPost();
-if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) && Auth::isAdmin() ) {
+if (isset($_GET["deleteid"]) && !Auth::checkAdmin($_GET["deleteid"]) && Auth::isAdmin() ) { //mazanie pouzivatela skontroluje ci mazany pouzivatel je admin
     Content::deleteUser($_GET["deleteid"]);
     Utility::redirect("admin.php");
 }
@@ -18,7 +18,7 @@ if (isset($_GET["deletecatid"]) && Auth::isAdmin()  ) {
 if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
     Content::deletePost($_GET["deletepostid"]);
     Utility::redirect("admin.php");
-}
+} //if podmienky pre GET poziadavky
 ?>
 
     <main class="admin-page">
@@ -142,8 +142,10 @@ if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
                             <td><?php echo htmlspecialchars($u["email"], ENT_QUOTES, "UTF-8"); ?></td>
                             <td><?php echo htmlspecialchars($u["nazov"], ENT_QUOTES, "UTF-8"); ?></td>
                             <td class="admin-actions-cell">
+                                <?php if (!Auth::checkAdmin($u["iduser"])): ?>
                                 <a href="change-role.php?id=<?php echo urlencode((string) $u["iduser"]); ?>" class="admin-btn admin-btn-edit">Edit</a>
                                 <a href="admin.php?deleteid=<?php echo urlencode((string) $u["iduser"]); ?>" class="admin-btn admin-btn-delete">Delete</a>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>

@@ -6,19 +6,19 @@ class Utility {
         return "Sem. praca - " . $page; # spojenie retazca so spolocnym nazvom a s aktualnym nazvom stranky a vlozenie do navratovej hodnoty
     }
     static function redirect(string $url):void{
-        header("Location: ".$url); # zavola vstavanu funkciu header s parametrom Location: ktora povie prehliadacu aby zmenila adresu na danu URL
+        header("Location: ".$url); # zavola vstavanu funkciu header s parametrom Location: ktora povie prehliadacu aby zmenila adresu na danu URL, pri parametre Location: odosle prehliadacu REDIRECT status code
         die(); # ukonci skript
     }
-    public static function log(string $log, bool $error):void{
+    public static function log(string $log, bool $error):void{ //logovanie, ak je hodnota error parametru true tak sa ulozi do error.log inak sa ulozi do log.log
         if ($error){
         $dir = __DIR__ . '/../log';
         if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+            mkdir($dir, 0777, true); //ak neexistuje zlozka tak ju vytvori s najvyssimi moznymi opravneniami
         }
         $file = $dir . '/error.log';
         $date = date('Y-m-d H:i:s');
-        $formattedMessage = "[$date] {$log}" . PHP_EOL;
-        file_put_contents($file, $formattedMessage, FILE_APPEND);
+        $formattedMessage = "[$date] {$log}" . PHP_EOL; //PHP_EOL je znak \n pre novy riadok
+        file_put_contents($file, $formattedMessage, FILE_APPEND); //ukladanie retazca do daneho suboru
         }
         else {
             $dir = __DIR__ . '/../log';
@@ -31,20 +31,18 @@ class Utility {
             file_put_contents($file, $formattedMessage, FILE_APPEND);
         }
     }
-    public static function message():void {
+    public static function message():void { //ukladanie sprav cez kontaktny formular
         try{
         $meno = $_POST["name"];
         $email = $_POST["email"];
         $sprava = $_POST["description"];
         $database = new Database();
         $db = $database->getConnection();
-        $date = date('Y-m-d');
-        $sql = $db->prepare("insert into message (meno,email,sprava,vytvorene) values (:meno,:email,:sprava,:vytvorene)");
-        $sql->execute(["meno"=>$meno,"email"=>$email,"sprava"=>$sprava,"vytvorene"=>$date]);
+        $sql = $db->prepare("insert into message (meno,email,sprava,vytvorene) values (:meno,:email,:sprava,now())");
+        $sql->execute(["meno"=>$meno,"email"=>$email,"sprava"=>$sprava]);
         }
         catch (PDOException $err){
-            echo $err->getMessage();
-            self::log($err->getMessage(), true);
+            self::log($err->getMessage(), true); //volanie statickej metody z vlastnej triedy
         }
     }
 }
