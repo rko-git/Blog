@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <main>
         <section class="form-section">
             <h2>Edit post</h2>
-            <form class="contact-form" method="post" action="post-edit.php?id=<?php echo $id; ?>" enctype="multipart/form-data">
+            <form class="contact-form" method="post" action="post-edit.php?id=<?php echo urlencode($id); ?>" enctype="multipart/form-data">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars((string) $post["idpost"], ENT_QUOTES, "UTF-8"); ?>">
 
                 <label for="nadpis">Title</label>

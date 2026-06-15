@@ -42,7 +42,7 @@ if (isset($_POST["logout"])) {Auth::logout();}
             </ul>
             <p class="logo-link" href="login.php" id="user"><?php 
             if (Auth::isLoggedIn()) {
-                echo $username;
+                echo htmlspecialchars($username, ENT_QUOTES);
             }
             else {
                 echo "Neprihlásený";

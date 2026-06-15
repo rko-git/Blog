@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <main>
         <section class="form-section">
             <h2>Edit user role</h2>
-            <form class="contact-form" method="post" action="change-role.php?id=<?php echo $id; ?>">
+            <form class="contact-form" method="post" action="change-role.php?id=<?php echo urlencode($id); ?>">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars((string) $user["iduser"], ENT_QUOTES, "UTF-8"); ?>">
 
                 <label for="nick"><?php echo htmlspecialchars($user["nick"], ENT_QUOTES); ?></label>

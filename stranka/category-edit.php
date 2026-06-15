@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <main>
         <section class="form-section">
             <h2>Edit category</h2>
-            <form class="contact-form" method="post" action="category-edit.php?id=<?php echo $id; ?>">
+            <form class="contact-form" method="post" action="category-edit.php?id=<?php echo urlencode($id); ?>">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars((string) $category["idcategory"], ENT_QUOTES, "UTF-8"); ?>">
 
                 <label for="name">Name</label>
