@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <fieldset class="category-fieldset">
                     <legend>Categories</legend>
                     <?php if (empty($categories)): ?>
-                    <p class="meta">No categories available. Create a category first.</p>
+                    <p class="meta">Zatiaľ žiadne kategórie.</p>
                     <?php else: ?>
                     <?php foreach ($categories as $category): ?>
                     <label class="checkbox-row" for="category-<?php echo htmlspecialchars((string) $category["idcategory"], ENT_QUOTES, "UTF-8"); ?>">
