@@ -23,20 +23,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <main>
         <section class="form-section">
-            <h2>Edit category</h2>
+            <h2>Upraviť kategóriu</h2>
             <form class="contact-form" method="post" action="category-edit.php?id=<?php echo urlencode($id); ?>">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars((string) $category["idcategory"], ENT_QUOTES, "UTF-8"); ?>">
 
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($category["nazov"], ENT_QUOTES, "UTF-8"); ?>" placeholder="Category name" required>
+                <label for="name">Názov</label>
+                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($category["nazov"], ENT_QUOTES, "UTF-8"); ?>" placeholder="Názov kategórie" required>
 
                 <label for="slug">Slug</label>
                 <input type="text" id="slug" name="slug" value="<?php echo htmlspecialchars($category["slug"], ENT_QUOTES, "UTF-8"); ?>" placeholder="category-slug" required>
 
-                <button type="submit" class="submit-btn">Save changes</button>
+                <button type="submit" class="submit-btn">Uložiť zmeny</button>
             </form>
             <p class="form-links">
-                <a href="admin.php" class="submit-btn btn-secondary">Back to Admin</a>
+                <a href="admin.php" class="submit-btn btn-secondary">Späť na admin</a>
             </p>
         </section>
     </main>

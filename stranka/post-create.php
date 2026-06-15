@@ -16,22 +16,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <main>
         <section class="form-section">
-            <h2>Create post</h2>
+            <h2>Vytvoriť príspevok</h2>
             <form class="contact-form" method="post" action="post-create.php" enctype="multipart/form-data">
-                <label for="nadpis">Title</label>
-                <input type="text" id="nadpis" name="nadpis" placeholder="Post title" required>
+                <label for="nadpis">Názov</label>
+                <input type="text" id="nadpis" name="nadpis" placeholder="Názov príspevku" required>
 
                 <label for="slug">Slug</label>
                 <input type="text" id="slug" name="slug" placeholder="post-slug" required>
 
-                <label for="obsah">Content</label>
-                <textarea id="obsah" name="obsah" rows="8" placeholder="Write post content" required></textarea>
+                <label for="obsah">Obsah</label>
+                <textarea id="obsah" name="obsah" rows="8" placeholder="Napíšte obsah príspevku" required></textarea>
 
-                <label for="image">Image</label>
+                <label for="image">Obrázok</label>
                 <input type="file" id="image" name="image" accept="image/jpeg,image/png,image/webp">
 
                 <fieldset class="category-fieldset">
-                    <legend>Categories</legend>
+                    <legend>Kategórie</legend>
                     <?php if (empty($categories)): ?>
                     <p class="meta">Zatiaľ žiadne kategórie.</p>
                     <?php else: ?>
@@ -44,10 +44,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <?php endif; ?>
                 </fieldset>
 
-                <button type="submit" class="submit-btn">Create post</button>
+                <button type="submit" class="submit-btn">Vytvoriť príspevok</button>
             </form>
             <p class="form-links">
-                <a href="admin.php" class="submit-btn btn-secondary">Return</a>
+                <a href="admin.php" class="submit-btn btn-secondary">Späť</a>
             </p>
         </section>
     </main>

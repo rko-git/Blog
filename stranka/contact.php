@@ -2,6 +2,7 @@
 require_once "casti/header.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     Utility::message();
+    Utility::redirect("contact.php");
 }
 ?>
 

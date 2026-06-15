@@ -4,7 +4,7 @@ require_once "../php/Blog.php";
 
 $posts = Content::readPost();
 $categories = Content::readCategory();
-if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_GET["deletepostid"])["iduser"] == $_SESSION["user_id"]) {
+if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_GET["deletepostid"])["iduser"] == $_SESSION["user_id"]) { //mazanie prispevku a kontrola ci je pouzivatel edito a ci je autorom prispevku
     Content::deletePost($_GET["deletepostid"]);
     Utility::redirect("admin.php");
 }
@@ -24,15 +24,15 @@ if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_G
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Author</th>
-                            <th>Title</th>
+                            <th>Autor</th>
+                            <th>Nadpis</th>
                             <th>Slug</th>
-                            <th>Image</th>
-                            <th>Categories</th>
-                            <th>Description</th>
-                            <th>Created</th>
-                            <th>Updated</th>
-                            <th>Actions</th>
+                            <th>Obrázok</th>
+                            <th>Kategórie</th>
+                            <th>Popis</th>
+                            <th>Vytvorené</th>
+                            <th>Aktualizované</th>
+                            <th>Akcie</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,7 +54,7 @@ if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_G
                                     foreach ($postc as $pc) {
                                         $postcategories[] = htmlspecialchars($pc["slug"], ENT_QUOTES, "UTF-8");
                                     }
-                                    echo implode(", ", $postcategories);
+                                    echo implode(", ", $postcategories); //implode spoji pole do retazca danym oddelovacom
                                 ?>
                                 </td>
                                 <td><?php echo htmlspecialchars($p["obsah"], ENT_QUOTES, "UTF-8"); ?></td>

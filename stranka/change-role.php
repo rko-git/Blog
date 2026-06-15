@@ -24,22 +24,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <main>
         <section class="form-section">
-            <h2>Edit user role</h2>
+            <h2>Upraviť rolu používateľa</h2>
             <form class="contact-form" method="post" action="change-role.php?id=<?php echo urlencode($id); ?>">
                 <input type="hidden" name="id" value="<?php echo htmlspecialchars((string) $user["iduser"], ENT_QUOTES, "UTF-8"); ?>">
 
                 <label for="nick"><?php echo htmlspecialchars($user["nick"], ENT_QUOTES); ?></label>
                 <input type="hidden" id="nick" name="nick" value="<?php echo htmlspecialchars($user["nick"], ENT_QUOTES, "UTF-8"); ?>" placeholder="User name" required>
-                <label for="role">Role:</label>
+                <label for="role">Rola:</label>
                 <?php foreach($roles as $r): ?>
                 <label class ="checkbox-row" for="role"><?php echo htmlspecialchars($r["nazov"], ENT_QUOTES); ?>
                 <input type="radio" id="<?php echo htmlspecialchars($r["idrole"], ENT_QUOTES);?>" name="idrole" value="<?php echo htmlspecialchars($r["idrole"], ENT_QUOTES); ?>" placeholder="role" required>
                 </label>
                 <?php endforeach;?>
-                <button type="submit" class="submit-btn">Save changes</button>
+                <button type="submit" class="submit-btn">Uložiť zmeny</button>
             </form>
             <p class="form-links">
-                <a href="admin.php" class="submit-btn btn-secondary">Back to Admin</a>
+                <a href="admin.php" class="submit-btn btn-secondary">Späť na admin</a>
             </p>
         </section>
     </main>
