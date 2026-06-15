@@ -44,7 +44,7 @@ if (isset($_GET["deletepostid"]) && Auth::isEditor() && Content::getPostById($_G
                             <?php foreach ($posts as $p): ?>
                             <?php $postc = Content::readPostCategory($p["idpost"]);?>
                         <tr>
-                                <td><?php echo htmlspecialchars((string) $p["idpost"], ENT_QUOTES, "UTF-8"); ?></td>
+                                <td><?php echo htmlspecialchars((string) $p["idpost"], ENT_QUOTES, "UTF-8"); ?></td> <!--osetrenie vystupu s htmlspecialchars aby sa specialne znaky nebrali ako JS alebo HTML kod, ENT_QUOTES prevedie obe typy uvodzoviek na HTML entity -->
                                 <td><?php echo htmlspecialchars($p["nick"], ENT_QUOTES, "UTF-8"); ?></td>
                                 <td><?php echo htmlspecialchars($p["nadpis"], ENT_QUOTES, "UTF-8"); ?></td>
                                 <td><?php echo htmlspecialchars($p["slug"], ENT_QUOTES, "UTF-8"); ?></td>

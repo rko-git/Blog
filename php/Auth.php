@@ -33,11 +33,11 @@ class Auth{
             return false;
         }
     }
-    public static function loginWithRememberCookie():void{
+    public static function loginWithRememberCookie():void{ //prihlasenie pouzivatela s remember cookie
         try{
             $database = new Database();
             $db = $database->getConnection();
-            if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
+            if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) { //ak nie je prihlaseny pouzivatel ale ma remember cookie vykona sa podmienka
                 $token = $_COOKIE["remember_token"];
                 $hash = hash("sha256", $token);
                 $sql = $db->prepare("select rt.iduser, u.nick, r.nazov from remember_token rt inner join user u on rt.iduser = u.iduser inner join role r on u.idrole = r.idrole where token_hash = :token_hash and expires_at > now()");
@@ -50,7 +50,7 @@ class Auth{
                     $_SESSION["user_name"] = $cookie["nick"];
                 }
             }
-            $sql = $db->exec("delete from remember_token where expires_at < now()"); //mazanie expirovanych remember tokenov
+            $sql = $db->exec("delete from remember_token where expires_at < now()"); //mazanie expirovanych remember tokenov z databazy
             return;
         }
         catch (PDOException $err){
@@ -59,6 +59,7 @@ class Auth{
         }
     }
     public static function logout():void{ 
+        $_SESSION = []; // pri odhlasovani sa superglobalna premenna _SESSION pre istotu navyse vyprazdnuje z prehliadaca
         if (isset($_COOKIE["remember_token"])) {
             $database = new Database();
             $db = $database->getConnection();
@@ -67,15 +68,14 @@ class Auth{
             $sql->execute(["token_hash"=>$hash]);
             setcookie("remember_token","",time() - 3600,"/");
         }
-        $_SESSION = []; // pri odhlasovani sa superglobalna premenna _SESSION pre istotu navyse vyprazdnuje
-        session_destroy();
+        session_destroy(); //vymaze session ulozeny na serveri
         Utility::redirect("home.php");
     }
     public static function getId(): int|null{
-        return $_SESSION["user_id"] ?? null; // ?? null coalescing operator vracia pravu stranu ak lava strana nie je nastavena alebo je null
+        return $_SESSION["user_id"] ?? null; 
     }
     public static function isAdmin(): bool{
-        return ($_SESSION["user_role"] ?? null) == "admin";
+        return ($_SESSION["user_role"] ?? null) == "admin"; // ?? null coalescing operator vracia pravu stranu ak lava strana nie je nastavena alebo je null, pouzity lebo porovnanie bez neho by vyvolalo php warning keby je pole prazdne
     }
     public static function isEditor(): bool{
         return ($_SESSION["user_role"] ?? null) == "editor";
@@ -101,28 +101,28 @@ class Auth{
         if (isset($_SESSION["user_id"])) {return true;}
         return false;
     }
-    public static function create() : bool{
+    public static function create() : bool{ //registracia
         if (!isset($_POST["username"]) || !isset($_POST["email"]) || !isset($_POST["password"])) {return false;} //ak nie je zadana nejaka hodnota vrati false
-        $meno = $_POST["username"];
-        $mail = $_POST["email"];
-        $heslo = $_POST["password"];
+            $meno = $_POST["username"];
+            $mail = $_POST["email"];
+            $heslo = $_POST["password"];
         try{
-        $database = new Database();
-        $db = $database->getConnection();
-        $date = date('Y-m-d');
-        $sql = $db->prepare("insert into user(nick,email,heslo,idrole,vytvorene) values(:nick,:email,:password,2,:vytvorene)");
-        $sql->execute(["nick"=>$meno,"email"=>$mail,"password"=>password_hash($heslo, PASSWORD_DEFAULT),"vytvorene"=>$date]); //password_hash zahashuje heslo v databaze
-        $reg = "Zaregistrovany pouzivatel: " . $meno . " E-mail: " . $mail;
-        Utility::log($reg, false);
-        Utility::redirect("login.php");
-        return true;
+            $database = new Database();
+            $db = $database->getConnection();
+            $date = date('Y-m-d');
+            $sql = $db->prepare("insert into user(nick,email,heslo,idrole,vytvorene) values(:nick,:email,:password,2,:vytvorene)"); //v db je id role pre user 2 tak vytvara ucet s rolou user
+            $sql->execute(["nick"=>$meno,"email"=>$mail,"password"=>password_hash($heslo, PASSWORD_DEFAULT),"vytvorene"=>$date]); //password_hash zahashuje heslo v databaze
+            $reg = "Zaregistrovany pouzivatel: " . $meno . " E-mail: " . $mail;
+            Utility::log($reg, false);
+            Utility::redirect("login.php");
+            return true;
         }
         catch (PDOException $err) {
             Utility::log("Chyba pri registracii" . $err->getMessage(), true);
             return false;
         }
     }
-    public static function getLoginStatus(): string{
+    public static function getLoginStatus(): string{ //pre zobrazovanie mena v header.php
         return $_SESSION["user_name"] ?? "Neprihlásený";
     }
 }

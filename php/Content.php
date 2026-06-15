@@ -39,7 +39,7 @@ class Content{
             return false;
         }
     }
-    public static function getCategoryById(int $id): array|false {
+    public static function getCategoryById(int $id): array|false { //ziskanie kategorie podla id pouzivane pri mazani s GET
         try {
             $database = new Database();
             $db = $database->getConnection();
