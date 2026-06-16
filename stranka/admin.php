@@ -24,17 +24,17 @@ if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
     <main class="admin-page">
         <section class="admin-section">
             <div class="admin-section-header">
-                <h2>Categories</h2>
-                <a href="category-create.php" class="submit-btn">Create category</a>
+                <h2>Kategórie</h2>
+                <a href="category-create.php" class="submit-btn">Vytvoriť kategóriu</a>
             </div>
             <div class="admin-table-wrap">
                 <table class="admin-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
+                            <th>Názov</th>
                             <th>Slug</th>
-                            <th>Actions</th>
+                            <th>Akcie</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,23 +62,23 @@ if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
 
         <section class="admin-section">
             <div class="admin-section-header">
-                <h2>Posts</h2>
-                <a href="post-create.php" class="submit-btn">Create post</a>
+                <h2>Príspevky</h2>
+                <a href="post-create.php" class="submit-btn">Vytvoriť príspevok</a>
             </div>
             <div class="admin-table-wrap">
                 <table class="admin-table">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Author</th>
-                            <th>Title</th>
+                            <th>Autor</th>
+                            <th>Nadpis</th>
                             <th>Slug</th>
-                            <th>Image</th>
-                            <th>Categories</th>
-                            <th>Description</th>
-                            <th>Created</th>
-                            <th>Updated</th>
-                            <th>Actions</th>
+                            <th>Obrázok</th>
+                            <th>Kategórie</th>
+                            <th>Popis</th>
+                            <th>Vytvorené</th>
+                            <th>Aktualizované</th>
+                            <th>Akcie</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,7 +88,7 @@ if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
                             </tr>
                         <?php else: ?>
                             <?php foreach ($posts as $p): ?>
-                            <?php $postc = Content::readPostCategory($p["idpost"]);?>
+                            <?php $postc = Content::readPostCategory($p["idpost"]);?> <!-- nacita kategoria podla idpost -->
                         <tr>
                                 <td><?php echo htmlspecialchars((string) $p["idpost"], ENT_QUOTES, "UTF-8"); ?></td>
                                 <td><?php echo htmlspecialchars($p["nick"], ENT_QUOTES, "UTF-8"); ?></td>
@@ -97,7 +97,7 @@ if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
                                 <td><?php echo htmlspecialchars($p["obrazok"], ENT_QUOTES, "UTF-8"); ?></td>
                                 <td>
                                 <?php $postcategories = [];
-                                    foreach ($postc as $pc) {
+                                    foreach ($postc as $pc) { //vnoreny cyklus pre nacitanie kategorii
                                         $postcategories[] = htmlspecialchars($pc["slug"], ENT_QUOTES, "UTF-8");
                                     }
                                     echo implode(", ", $postcategories);
@@ -120,7 +120,7 @@ if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
 
         <section class="admin-section">
             <div class="admin-section-header">
-                <h2>Registered users</h2>
+                <h2>Registrovaný používatelia</h2>
             </div>
             <div class="admin-table-wrap">
                 <table class="admin-table">
@@ -129,8 +129,8 @@ if (isset($_GET["deletepostid"]) && Auth::isAdmin() ) {
                             <th>ID</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
+                            <th>Rola</th>
+                            <th>Akcie</th>
                         </tr>
                     </thead>
                     <tbody>
